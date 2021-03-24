@@ -15,13 +15,13 @@ class UTMProjectionTest : public ::testing::Test {
   UtmProjector::Ptr utmProjectorNoOffset;
   UtmProjector::Ptr utmProjectorNoOffsetThrow;
 
-  double originLat = 49.01439;
-  double originLon = 8.41722;
+  double originLat = 1.298950;
+  double originLon = 103.772787;
   lanelet::GPSPoint originGps{originLat, originLon, 0.};
   lanelet::Origin origin{originGps};
 
-  double originX = 457386.38238563854;
-  double originY = 5429219.051147663;
+  double originX = 363466.28;
+  double originY = 143606.40;
   lanelet::BasicPoint3d originMetric{originX, originY, 0.};
 };
 
@@ -53,31 +53,31 @@ TEST_F(UTMProjectionTest, TestForwardOutOfHemisphere) {  // NOLINT
 }
 
 TEST_F(UTMProjectionTest, TestForwardOutOfZoneButInPadding) {  // NOLINT
-  // origin is in UTM zone 32
-  double lonTest = 5.;  // UTM zone 31 but less than 100km away from zone 32
+  // origin is in UTM zone 48
+  double lonTest = 101.;  // UTM zone 47 but less than 100km away from zone 48
   ASSERT_NO_THROW(utmProjector->forward({originLat, lonTest, 0.}));                                    // NOLINT
   ASSERT_THROW(utmProjectorNoOffsetThrow->forward({originLat, lonTest, 0.}), ForwardProjectionError);  // NOLINT
 }
 
 TEST_F(UTMProjectionTest, TestForwardOutOfZoneOutOfPadding) {  // NOLINT
-  // origin is in UTM zone 32
-  double lonTest = 0.;  // UTM zone 31 and out of padding area of zone 32
+  // origin is in UTM zone 48
+  double lonTest = 97.;  // UTM zone 31 and out of padding area of zone 48
   ASSERT_THROW(utmProjector->forward({originLat, lonTest, 0.}), ForwardProjectionError);               // NOLINT
   ASSERT_THROW(utmProjectorNoOffsetThrow->forward({originLat, lonTest, 0.}), ForwardProjectionError);  // NOLINT
 }
 
 TEST_F(UTMProjectionTest, TestReverseOutOfZoneButInPadding) {  // NOLINT
-  // origin is in UTM zone 32
-  double x = 207547.;  // UTM zone 31 but less than 100km away from zone 32
-  double y = 5436767.;
+  // origin is in UTM zone 48
+  double x = 808584.;  // UTM zone 47 but less than 100km away from zone 48
+  double y = 143742.;
   ASSERT_NO_THROW(utmProjectorNoOffset->reverse({x, y, 0.}););                            // NOLINT
   ASSERT_THROW(utmProjectorNoOffsetThrow->reverse({x, y, 0.});, ReverseProjectionError);  // NOLINT
 }
 
 TEST_F(UTMProjectionTest, TestReverseOutOfZoneOutOfPadding) {  // NOLINT
-  // origin is in UTM zone 32
-  double x = 2000000.0;  // out of padding area of zone 32
-  double y = 5000000.0;
+  // origin is in UTM zone 48
+  double x = 800000.0;  // out of padding area of zone 48
+  double y = 100000.0;
   ASSERT_THROW(utmProjectorNoOffset->reverse({x, y, 0.});, ReverseProjectionError);       // NOLINT
   ASSERT_THROW(utmProjectorNoOffsetThrow->reverse({x, y, 0.});, ReverseProjectionError);  // NOLINT
 }

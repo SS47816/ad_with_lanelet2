@@ -20,7 +20,10 @@
 // ROS
 #include <ros/ros.h>
 #include <tf2_ros/transform_listener.h>
-
+#include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/PoseArray.h>
+#include <geometry_msgs/Pose.h>
+#include <vector>
 // Autoware
 #include <autoware_lanelet2_msgs/MapBin.h>
 #include <mission_planner/lanelet2_impl/route_handler.h>
@@ -51,7 +54,7 @@ private:
   lanelet::traffic_rules::TrafficRulesPtr traffic_rules_ptr_;
 
   ros::Subscriber map_subscriber_;
-
+  
   void mapCallback(const autoware_lanelet2_msgs::MapBin & msg);
   bool isGoalValid() const;
 

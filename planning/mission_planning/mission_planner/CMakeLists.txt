@@ -33,7 +33,15 @@ add_dependencies(mission_planner
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
 )
+# add_library(mission_planner SHARED
+# lib/mission_planner_base.cpp
+# src/mission_planner_lanelet2/mission_planner_lanelet2.cpp
+# src/mission_planner_lanelet2/route_handler.cpp
+# src/mission_planner_lanelet2/mission_planner_main.cpp
+# src/mission_planner_lanelet2/utility_functions.cpp
+# )
 target_link_libraries(mission_planner
+  # ${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
 

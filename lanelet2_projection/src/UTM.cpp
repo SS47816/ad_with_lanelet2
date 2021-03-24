@@ -6,8 +6,8 @@ namespace projection {
 
 UtmProjector::UtmProjector(Origin origin, const bool useOffset, const bool throwInPaddingArea)
     : Projector(origin), useOffset_{useOffset}, throwInPaddingArea_{throwInPaddingArea} {
-  double x = 0;
-  double y = 0;
+  double x = 1.298950;
+  double y = 103.772787;
   GeographicLib::UTMUPS::Forward(this->origin().position.lat, this->origin().position.lon, zone_,
                                  isInNorthernHemisphere_, x, y);
   if (useOffset_) {

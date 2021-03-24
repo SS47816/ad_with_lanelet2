@@ -59,7 +59,7 @@ void RouteHandler::setRouteLanelets(
     for (const auto & left_relation : left_relations) {
       if (left_relation.relationType == lanelet::routing::RelationType::Left) {
         route_lanelets_id.insert(left_relation.lanelet.id());
-      } else if (left_relation.relationType == lanelet::routing::RelationType::AdjacentLeft) {
+      } else if (left_relation.relationType == lanelet::routing::RelationType::AdjacentLeft) {//cannot be accessed via lane change
         candidate_lanes_id.insert(left_relation.lanelet.id());
       }
     }
@@ -67,28 +67,27 @@ void RouteHandler::setRouteLanelets(
 
   //  check if candidates are really part of route
   for (const auto & candidate_id : candidate_lanes_id) {
-    lanelet::ConstLanelet lanelet = lanelet_map_ptr_->laneletLayer.get(candidate_id);
+    lanelet::ConstLanelet lanelet = lanelet_map_ptr_->laneletLayer.get(candidate_id); 
     auto previous_lanelets = routing_graph_ptr_->previous(lanelet);
     bool is_connected_to_main_lanes_prev = false;
     bool is_connected_to_candidate_prev = true;
-    if (exists(start_lanelets_, lanelet)) {
+    if (exists(start_lanelets_, lanelet)) { //route exist from starting lanelet to adjacenet lanelet
       is_connected_to_candidate_prev = false;
     }
     while (!previous_lanelets.empty() && is_connected_to_candidate_prev &&
            !is_connected_to_main_lanes_prev) {
-      is_connected_to_candidate_prev = false;
+      is_connected_to_candidate_prev = false; //while loop breaks if adjacent lane is not connected to main route after the end of for loop
 
       for (const auto & prev_lanelet : previous_lanelets) {
-        if (route_lanelets_id.find(prev_lanelet.id()) != route_lanelets_id.end()) {
-          is_connected_to_main_lanes_prev = true;
+        if (route_lanelets_id.find(prev_lanelet.id()) != route_lanelets_id.end()) { //if there is a previous lanelet before the right/left lanelet but is not a deadend
+          is_connected_to_main_lanes_prev = true; //while loop breaks if  adjacent lane is linked to the main lane
           break;
         }
         if (exists(start_lanelets_, prev_lanelet)) {
           break;
         }
 
-        if (candidate_lanes_id.find(prev_lanelet.id()) != candidate_lanes_id.end()) {
-          is_connected_to_candidate_prev = true;
+        if (candidate_lanes_id.find(prev_lanelet.id()) != candidate_lanes_id.end()) {//if there is a previous lanelet before the adjeacent lanelet but is not a deadend
           previous_lanelets = routing_graph_ptr_->previous(prev_lanelet);
           break;
         }

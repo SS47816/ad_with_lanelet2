@@ -47,6 +47,8 @@ protected:
   ros::NodeHandle pnh_;
 
   ros::Publisher marker_publisher_;
+  ros::Publisher wp_pub_; // publish waypoints of the shortest path
+
 
   virtual bool isRoutingGraphReady() const = 0;
   virtual autoware_planning_msgs::Route planRoute() = 0;

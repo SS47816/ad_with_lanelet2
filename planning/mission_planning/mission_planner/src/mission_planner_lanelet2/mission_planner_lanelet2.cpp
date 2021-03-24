@@ -13,6 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include <mission_planner/lanelet2_impl/mission_planner_lanelet2.h>
 #include <mission_planner/lanelet2_impl/route_handler.h>
@@ -33,8 +38,9 @@
 
 #include <unordered_set>
 
-namespace
+namespace 
 {
+
 RouteSections combineConsecutiveRouteSections(
   const RouteSections & route_sections1, const RouteSections & route_sections2)
 {
@@ -272,34 +278,90 @@ bool MissionPlannerLanelet2::planPathBetweenCheckpoints(
   const geometry_msgs::PoseStamped & goal_checkpoint,
   lanelet::ConstLanelets * path_lanelets_ptr) const
 {
-  lanelet::Lanelet start_lanelet;
-  if (!getClosestLanelet(start_checkpoint.pose, lanelet_map_ptr_, &start_lanelet)) {
-    return false;
-  }
-  lanelet::Lanelet goal_lanelet;
-  if (!getClosestLanelet(goal_checkpoint.pose, lanelet_map_ptr_, &goal_lanelet)) {
-    return false;
-  }
+    lanelet::Lanelet start_lanelet;
+    if (!getClosestLanelet(start_checkpoint.pose, lanelet_map_ptr_, &start_lanelet)) {
+        return false;
+    }
+    lanelet::Lanelet goal_lanelet;
+    if (!getClosestLanelet(goal_checkpoint.pose, lanelet_map_ptr_, &goal_lanelet)) {
+        return false;
+    }
 
-  // get all possible lanes that can be used to reach goal (including all possible lane change)
-  lanelet::Optional<lanelet::routing::Route> optional_route =
-    routing_graph_ptr_->getRoute(start_lanelet, goal_lanelet, 0);
-  if (!optional_route) {
-    ROS_ERROR_STREAM(
-      "Failed to find a proper path!"
-      << std::endl
-      << "start checkpoint: " << toString(start_pose_.pose) << std::endl
-      << "goal checkpoint: " << toString(goal_pose_.pose) << std::endl
-      << "start lane id: " << start_lanelet.id() << std::endl
-      << "goal lane id: " << goal_lanelet.id() << std::endl);
-    return false;
-  }
+    // get all possible lanes that can be used to reach goal (including all possible lane change)
+    lanelet::Optional<lanelet::routing::Route> optional_route =
+        routing_graph_ptr_->getRoute(start_lanelet, goal_lanelet, 0);
+    if (!optional_route) {
+        ROS_ERROR_STREAM(
+        "Failed to find a proper path!"
+        << std::endl
+        << "start checkpoint: " << toString(start_pose_.pose) << std::endl
+        << "goal checkpoint: " << toString(goal_pose_.pose) << std::endl
+        << "start lane id: " << start_lanelet.id() << std::endl
+        << "goal lane id: " << goal_lanelet.id() << std::endl);
+        return false;
+    }
 
-  const auto shortest_path = optional_route->shortestPath();
-  for (const auto & llt : shortest_path) {
-    path_lanelets_ptr->push_back(llt);
-  }
-  return true;
+    const auto shortest_path = optional_route->shortestPath();
+  
+    geometry_msgs::PoseArray wp_array_msg;
+    geometry_msgs::Pose pose;
+    std::ifstream inputFile;
+    std::ofstream outputFile;
+    std::string wp_path = "/ssd/auto_clean/src/FYP_lane/src/provide_map/path/waypoints.txt";
+    outputFile.open(wp_path);
+    // std::vector<int> laneIDs;
+    //laneIDs.clear();
+    // lanelet::ConstLanelets lanelets;
+    // lanelets = shortest_path.lanelets_();
+
+    // pose.position.x = start_pose_.pose.position.x;
+    // pose.position.y = start_pose_.pose.position.y;
+    // wp_array_msg.poses.emplace_back(pose);
+
+    // pose.position.x = goal_pose_.pose.position.x;
+    // pose.position.y = goal_pose_.pose.position.y;
+    // wp_array_msg.poses.emplace_back(pose);
+
+    double x, y;
+    for (const auto & llt : shortest_path)
+    {
+        path_lanelets_ptr->push_back(llt);
+        // laneIDs.push_back(llt.id());
+        ROS_INFO_STREAM("The lanelet.id is:" <<std::to_string(llt.id())<<std::endl);
+        std::string path ="/ssd/auto_clean/src/provide_map/centerline/" + std::to_string(llt.id()) + ".txt";
+        inputFile.open(path);
+
+        while(inputFile >> x >> y)
+        {  
+            outputFile << std::setprecision(12) << x - 363466.28 << " " << y - 143606.40 << "\n";
+            pose.position.x = x - 363466.28;
+            pose.position.y = y - 143606.40 ;
+            wp_array_msg.poses.emplace_back(pose);
+        }
+
+        inputFile.close();
+    }
+  
+    wp_pub_.publish(wp_array_msg);
+
+    // for(int i = 0; i <= shortest_path.size(); i++)
+    // {
+    //   //laneIDs.push_back(llt.lanelet.id());
+
+    //   std::string path ="/home/anjun/catkin_ws/src/provide_map/centerline/" + std::to_string(shortest_path[i].id()) + ".txt";
+    //   inputFile.open(path);
+
+    //   std::ofstream outputFile("/home/anjun/catkin_ws/src/provide_map/path/waypoints.txt");
+
+    //   double x, y;
+    //   while(inputFile >> x >> y);
+    //   {
+    //     outputFile << x << " " << y << std::endl;
+    //   }
+    // }
+
+    outputFile.close();
+    return true;
 }
 
 lanelet::ConstLanelets MissionPlannerLanelet2::getMainLanelets(

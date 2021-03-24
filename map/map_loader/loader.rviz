@@ -5,9 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /MarkerArray1
-        - /MarkerArray1/Namespaces1
-        - /MarkerArray2
+        - /Path1
       Splitter Ratio: 0.6958039999008179
     Tree Height: 776
   - Class: rviz/Selection
@@ -59,9 +57,9 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        base_link:
-          Value: true
         map:
+          Value: true
+        world:
           Value: true
       Marker Scale: 5
       Name: TF
@@ -69,8 +67,8 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        map:
-          base_link:
+        world:
+          map:
             {}
       Update Interval: 0
       Value: true
@@ -80,16 +78,9 @@ Visualization Manager:
       Name: MarkerArray
       Namespaces:
         center_lane_line: true
-        crosswalk_lanelets: true
-        lanelet direction: true
         left_lane_bound: true
-        parking_lots: true
-        parking_space: true
         right_lane_bound: true
         road_lanelets: true
-        stop_lines: true
-        traffic_light: true
-        traffic_light_triangle: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -97,17 +88,37 @@ Visualization Manager:
       Marker Topic: /planning/mission_planning/route_marker
       Name: MarkerArray
       Namespaces:
-        goal_lanelets: true
-        left_lane_bound: true
-        right_lane_bound: true
-        route_lanelets: true
+        {}
       Queue Size: 100
+      Value: true
+    - Alpha: 1
+      Buffer Length: 1
+      Class: rviz/Path
+      Color: 25; 255; 0
+      Enabled: true
+      Head Diameter: 0.30000001192092896
+      Head Length: 0.20000000298023224
+      Length: 0.30000001192092896
+      Line Style: Lines
+      Line Width: 0.029999999329447746
+      Name: Path
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Color: 255; 85; 255
+      Pose Style: Arrows
+      Radius: 0.029999999329447746
+      Shaft Diameter: 0.10000000149011612
+      Shaft Length: 0.10000000149011612
+      Topic: /viz_topic
+      Unreliable: false
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: map
+    Fixed Frame: world
     Frame Rate: 30
   Name: root
   Tools:
@@ -130,7 +141,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: -2.7200026512145996
+      Angle: 0
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
@@ -140,11 +151,11 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 9.88464069366455
-      Target Frame: <Fixed Frame>
+      Scale: 4.564784526824951
+      Target Frame: base_link
       Value: TopDownOrtho (rviz)
-      X: 3761.53125
-      Y: 73750.6953125
+      X: 0
+      Y: 0
     Saved: ~
 Window Geometry:
   Displays:

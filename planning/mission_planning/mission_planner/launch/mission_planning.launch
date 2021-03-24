@@ -1,6 +1,6 @@
 <launch>
   <arg name="goal_topic_name" default="/move_base_simple/goal" />
-  <arg name="checkpoint_topic_name" default="/move_base_simple/goal" />
+  <arg name="checkpoint_topic_name" default="/move_base_simple/fake_goal" />
   <arg name="rout_topic_name" default="/planning/mission_planning/route" />
   <arg name="map_topic_name" default="/vector_map" />
   <arg name="visualization_topic_name" default="/planning/mission_planning/route_marker" />

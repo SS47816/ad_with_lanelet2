@@ -17,6 +17,8 @@
 
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <visualization_msgs/MarkerArray.h>
+#include <geometry_msgs/PoseArray.h>
+#include <geometry_msgs/Pose.h>
 
 #include <lanelet2_routing/Route.h>
 
@@ -38,6 +40,7 @@ MissionPlanner::MissionPlanner() : pnh_("~"), tf_listener_(tf_buffer_)
   route_publisher_ = pnh_.advertise<autoware_planning_msgs::Route>("output/route", 1, true);
   marker_publisher_ =
     pnh_.advertise<visualization_msgs::MarkerArray>("debug/route_marker", 1, true);
+  wp_pub_ = pnh_.advertise<geometry_msgs::PoseArray>("wp_topic", 1, true);
 }
 
 bool MissionPlanner::getEgoVehiclePose(geometry_msgs::PoseStamped * ego_vehicle_pose)
